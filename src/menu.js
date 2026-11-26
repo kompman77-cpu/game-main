@@ -35,9 +35,9 @@ const Menu = {
         // Build title menu options based on save data
         this._titleHasSave = SaveSystem.hasSaveData();
         if (this._titleHasSave) {
-            this._titleOptions = ['Continue', 'New Game', 'Controls'];
+            this._titleOptions = ['Продолжить', 'Новая игра', 'Управление'];
         } else {
-            this._titleOptions = ['New Game', 'Controls'];
+            this._titleOptions = ['Новая игра', 'Управление'];
         }
 
         // Generate decorative stars for title background
@@ -104,12 +104,12 @@ const Menu = {
         if (Input.isJustPressed('Enter')) {
             AudioManager.playMenuConfirm();
             const selected = this._titleOptions[this.selectedIndex];
-            if (selected === 'Continue') {
+            if (selected === 'Продолжить') {
                 // Continue — load save and go to world map
                 GameState.transitionTo(GameState.WORLD_MAP, () => {
                     GameState.setupWorldMap();
                 });
-            } else if (selected === 'New Game') {
+            } else if (selected === 'Новая игра') {
                 if (this._titleHasSave) {
                     // Show confirmation dialog
                     this._showNewGameConfirm = true;
@@ -121,7 +121,7 @@ const Menu = {
                         GameState.setupWorldMap();
                     });
                 }
-            } else if (selected === 'Controls') {
+            } else if (selected === 'Управление') {
                 GameState.changeTo(GameState.CONTROLS);
                 this.initControls();
             }
@@ -195,13 +195,13 @@ const Menu = {
         ctx.save();
 
         // Title shadow
-        this._drawTextWithOutline(ctx, 'KINGDOMS OF THE CANVAS',
+        this._drawTextWithOutline(ctx, 'КОРОЛЕВСТВА ХОЛСТА',
             CANVAS_WIDTH / 2, titleY + 3,
             'bold 48px sans-serif',
             'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.3)', 'center');
 
         // Title main
-        this._drawTextWithOutline(ctx, 'KINGDOMS OF THE CANVAS',
+        this._drawTextWithOutline(ctx, 'КОРОЛЕВСТВА ХОЛСТА',
             CANVAS_WIDTH / 2, titleY,
             'bold 48px sans-serif',
             COLORS.mutedGold, COLORS.deepCharcoal, 'center');
@@ -209,7 +209,7 @@ const Menu = {
         ctx.restore();
 
         // Subtitle
-        this._drawTextWithOutline(ctx, 'A Browser Platformer Adventure',
+        this._drawTextWithOutline(ctx, 'Приключение-платформер в браузере',
             CANVAS_WIDTH / 2, titleY + 40,
             '14px sans-serif',
             COLORS.steelBlue, COLORS.deepCharcoal, 'center');
@@ -263,7 +263,7 @@ const Menu = {
 
         // Version / credits at bottom
         ctx.globalAlpha = 0.5;
-        this._drawTextWithOutline(ctx, 'Built with Canvas & JavaScript',
+        this._drawTextWithOutline(ctx, 'Сделано на Canvas и JavaScript',
             CANVAS_WIDTH / 2, CANVAS_HEIGHT - 20,
             '12px sans-serif',
             COLORS.steelBlue, COLORS.deepCharcoal, 'center');
@@ -300,17 +300,17 @@ const Menu = {
         ctx.stroke();
 
         // Title
-        this._drawTextWithOutline(ctx, 'Start New Game?',
+        this._drawTextWithOutline(ctx, 'Начать новую игру?',
             CANVAS_WIDTH / 2, dy + 40,
             'bold 22px sans-serif',
             COLORS.softCream, COLORS.deepCharcoal, 'center');
 
         // Message
-        this._drawTextWithOutline(ctx, 'This will erase your',
+        this._drawTextWithOutline(ctx, 'Прогресс сохранений',
             CANVAS_WIDTH / 2, dy + 75,
             '14px sans-serif',
             COLORS.steelBlue, COLORS.deepCharcoal, 'center');
-        this._drawTextWithOutline(ctx, 'save data.',
+        this._drawTextWithOutline(ctx, 'будет стёрт.',
             CANVAS_WIDTH / 2, dy + 95,
             '14px sans-serif',
             COLORS.steelBlue, COLORS.deepCharcoal, 'center');
@@ -323,7 +323,7 @@ const Menu = {
         const btnStartX = dx + (dw - totalBtnW) / 2;
         const btnY = dy + dh - 50;
 
-        const labels = ['Yes', 'No'];
+        const labels = ['Да', 'Нет'];
         for (let i = 0; i < 2; i++) {
             const bx = btnStartX + i * (btnW + btnGap);
             const selected = i === this._confirmSelectedIndex;
@@ -435,7 +435,7 @@ const Menu = {
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // Title
-        this._drawTextWithOutline(ctx, 'Controls',
+        this._drawTextWithOutline(ctx, 'Управление',
             CANVAS_WIDTH / 2, 60,
             'bold 28px sans-serif',
             COLORS.mutedGold, COLORS.deepCharcoal, 'center');
@@ -458,14 +458,14 @@ const Menu = {
 
         // Control bindings
         const bindings = [
-            ['Arrow Keys', 'Move Left / Right'],
-            ['Arrow Up', 'Look Up'],
-            ['Arrow Down', 'Crouch'],
-            ['Z', 'Jump (hold for higher)'],
-            ['X', 'Attack (hold to charge)'],
-            ['Shift', 'Run (hold while moving)'],
-            ['Escape', 'Pause Game'],
-            ['Enter', 'Confirm / Start']
+            ['Стрелки', 'Влево / Вправо'],
+            ['Стрелка вверх', 'Посмотреть вверх'],
+            ['Стрелка вниз', 'Присесть'],
+            ['Z', 'Прыжок (держать — выше)'],
+            ['X', 'Атака (держать — заряд)'],
+            ['Shift', 'Бег (держать при движении)'],
+            ['Escape', 'Пауза'],
+            ['Enter', 'Подтвердить / Старт']
         ];
 
         const startY = panelY + 30;
@@ -503,7 +503,7 @@ const Menu = {
         // Back hint
         const backAlpha = 0.5 + 0.3 * Math.sin(this.animTimer * 3);
         ctx.globalAlpha = backAlpha;
-        this._drawTextWithOutline(ctx, 'Press Escape or Enter to return',
+        this._drawTextWithOutline(ctx, 'Нажмите Escape или Enter для возврата',
             CANVAS_WIDTH / 2, CANVAS_HEIGHT - 40,
             '14px sans-serif',
             COLORS.steelBlue, COLORS.deepCharcoal, 'center');
@@ -513,12 +513,12 @@ const Menu = {
     // =============================================
     // PAUSE MENU
     // =============================================
-    _pauseOptions: ['Resume', 'Volume', 'Mute: OFF', 'Restart Stage', 'Return to World Map', 'Quit to Title'],
+    _pauseOptions: ['Продолжить', 'Громкость', 'Звук: ВЫКЛ', 'Этап заново', 'На карту мира', 'Выйти в меню'],
 
     initPause() {
         this.selectedIndex = 0;
         // Update mute label to reflect current state
-        this._pauseOptions[2] = AudioManager.muted ? 'Mute: ON' : 'Mute: OFF';
+        this._pauseOptions[2] = AudioManager.muted ? 'Звук: ВКЛ' : 'Звук: ВЫКЛ';
     },
 
     updatePause() {
@@ -526,8 +526,8 @@ const Menu = {
 
         // Update dynamic labels
         const volPct = Math.round(AudioManager.masterVolume * 100);
-        this._pauseOptions[1] = 'Volume: ' + volPct + '%';
-        this._pauseOptions[2] = AudioManager.muted ? 'Mute: ON' : 'Mute: OFF';
+        this._pauseOptions[1] = 'Громкость: ' + volPct + '%';
+        this._pauseOptions[2] = AudioManager.muted ? 'Звук: ВКЛ' : 'Звук: ВЫКЛ';
 
         // Escape to resume
         if (Input.isJustPressed('Escape')) {
@@ -600,7 +600,7 @@ const Menu = {
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // "PAUSED" title
-        this._drawTextWithOutline(ctx, 'PAUSED',
+        this._drawTextWithOutline(ctx, 'ПАУЗА',
             CANVAS_WIDTH / 2, 140,
             'bold 28px sans-serif',
             COLORS.mutedGold, COLORS.deepCharcoal, 'center');
@@ -626,7 +626,7 @@ const Menu = {
     // =============================================
     // GAME OVER SCREEN
     // =============================================
-    _gameOverOptions: ['Continue', 'Quit to Title'],
+    _gameOverOptions: ['Продолжить', 'Выйти в меню'],
 
     initGameOver() {
         this.selectedIndex = 0;
@@ -671,7 +671,7 @@ const Menu = {
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // "GAME OVER" title
-        this._drawTextWithOutline(ctx, 'GAME OVER',
+        this._drawTextWithOutline(ctx, 'ИГРА ОКОНЧЕНА',
             CANVAS_WIDTH / 2, 190,
             'bold 48px sans-serif',
             COLORS.emberRed, COLORS.deepCharcoal, 'center');
@@ -696,7 +696,7 @@ const Menu = {
     // =============================================
     // STAGE COMPLETE SCREEN
     // =============================================
-    _stageCompleteOptions: ['Continue'],
+    _stageCompleteOptions: ['Продолжить'],
     _completionTime: 0,
     _completionCoins: 0,
     _completionTotalCoins: 0,
@@ -727,7 +727,7 @@ const Menu = {
         ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // "STAGE COMPLETE!" title
-        this._drawTextWithOutline(ctx, 'STAGE COMPLETE!',
+        this._drawTextWithOutline(ctx, 'ЭТАП ПРОЙДЕН!',
             CANVAS_WIDTH / 2, 160,
             'bold 28px sans-serif',
             COLORS.mossGreen, COLORS.deepCharcoal, 'center');
@@ -751,7 +751,7 @@ const Menu = {
         const seconds = Math.floor(this._completionTime % 60);
         const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
 
-        this._drawTextWithOutline(ctx, 'Time',
+        this._drawTextWithOutline(ctx, 'Время',
             panelX + 40, panelY + 40,
             '14px sans-serif',
             COLORS.steelBlue, COLORS.deepCharcoal, 'left');
@@ -762,7 +762,7 @@ const Menu = {
 
         // Coins — show collected / total
         const coinStr = this._completionCoins + ' / ' + this._completionTotalCoins;
-        this._drawTextWithOutline(ctx, 'Coins',
+        this._drawTextWithOutline(ctx, 'Монеты',
             panelX + 40, panelY + 80,
             '14px sans-serif',
             COLORS.steelBlue, COLORS.deepCharcoal, 'left');
@@ -772,7 +772,7 @@ const Menu = {
             COLORS.mutedGold, COLORS.deepCharcoal, 'right');
 
         // Congratulatory message
-        this._drawTextWithOutline(ctx, 'Well done, adventurer!',
+        this._drawTextWithOutline(ctx, 'Отлично, искатель приключений!',
             CANVAS_WIDTH / 2, panelY + 130,
             '18px sans-serif',
             COLORS.softCream, COLORS.deepCharcoal, 'center');
@@ -781,7 +781,7 @@ const Menu = {
         const continueY = panelY + panelH + 20;
         const pulseAlpha = 0.5 + 0.5 * Math.abs(Math.sin(this.animTimer * 2.5));
         ctx.globalAlpha = pulseAlpha;
-        this._drawTextWithOutline(ctx, 'Press Enter to Continue',
+        this._drawTextWithOutline(ctx, 'Нажмите Enter, чтобы продолжить',
             CANVAS_WIDTH / 2, continueY,
             '22px sans-serif',
             COLORS.mutedGold, COLORS.deepCharcoal, 'center');
@@ -874,7 +874,7 @@ const Menu = {
             ctx.fill();
             ctx.globalAlpha = 1.0;
 
-            this._drawTextWithOutline(ctx, 'VICTORY!',
+            this._drawTextWithOutline(ctx, 'ПОБЕДА!',
                 CANVAS_WIDTH / 2, titleY,
                 'bold 48px sans-serif',
                 COLORS.mutedGold, COLORS.deepCharcoal, 'center');
@@ -883,7 +883,7 @@ const Menu = {
         // Subtitle
         const subY = baseY + 100;
         if (subY > -30 && subY < CANVAS_HEIGHT + 30) {
-            this._drawTextWithOutline(ctx, 'The Architect Has Fallen',
+            this._drawTextWithOutline(ctx, 'Архитектор повержен',
                 CANVAS_WIDTH / 2, subY,
                 'bold 28px sans-serif',
                 COLORS.softCream, COLORS.deepCharcoal, 'center');
@@ -892,14 +892,14 @@ const Menu = {
         // Congratulation text
         const congY = baseY + 160;
         if (congY > -30 && congY < CANVAS_HEIGHT + 30) {
-            this._drawTextWithOutline(ctx, 'You have conquered all four kingdoms',
+            this._drawTextWithOutline(ctx, 'Вы покорили все четыре королевства',
                 CANVAS_WIDTH / 2, congY,
                 '18px sans-serif',
                 COLORS.steelBlue, COLORS.deepCharcoal, 'center');
         }
         const cong2Y = baseY + 190;
         if (cong2Y > -30 && cong2Y < CANVAS_HEIGHT + 30) {
-            this._drawTextWithOutline(ctx, 'and restored peace to the Canvas!',
+            this._drawTextWithOutline(ctx, 'и вернули покой на Холст!',
                 CANVAS_WIDTH / 2, cong2Y,
                 '18px sans-serif',
                 COLORS.steelBlue, COLORS.deepCharcoal, 'center');
@@ -925,7 +925,7 @@ const Menu = {
             const seconds = Math.floor(this._victoryTime % 60);
             const timeStr = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
 
-            this._drawTextWithOutline(ctx, 'Total Time',
+            this._drawTextWithOutline(ctx, 'Общее время',
                 panelX + 40, statsY + 40,
                 '14px sans-serif',
                 COLORS.steelBlue, COLORS.deepCharcoal, 'left');
@@ -935,7 +935,7 @@ const Menu = {
                 COLORS.softCream, COLORS.deepCharcoal, 'right');
 
             // Total Coins
-            this._drawTextWithOutline(ctx, 'Total Coins',
+            this._drawTextWithOutline(ctx, 'Всего монет',
                 panelX + 40, statsY + 80,
                 '14px sans-serif',
                 COLORS.steelBlue, COLORS.deepCharcoal, 'left');
@@ -945,7 +945,7 @@ const Menu = {
                 COLORS.mutedGold, COLORS.deepCharcoal, 'right');
 
             // Total Deaths
-            this._drawTextWithOutline(ctx, 'Total Deaths',
+            this._drawTextWithOutline(ctx, 'Всего смертей',
                 panelX + 40, statsY + 120,
                 '14px sans-serif',
                 COLORS.steelBlue, COLORS.deepCharcoal, 'left');
@@ -958,19 +958,19 @@ const Menu = {
         // Credits section
         const creditsStartY = baseY + 460;
         const creditLines = [
-            { text: 'CREDITS', font: 'bold 22px sans-serif', color: COLORS.mutedGold },
+            { text: 'СОЗДАТЕЛИ', font: 'bold 22px sans-serif', color: COLORS.mutedGold },
             { text: '', font: '14px sans-serif', color: COLORS.softCream },
-            { text: 'Game Design & Programming', font: '18px sans-serif', color: COLORS.softCream },
-            { text: 'Built with HTML5 Canvas & JavaScript', font: '14px sans-serif', color: COLORS.steelBlue },
+            { text: 'Дизайн и программирование', font: '18px sans-serif', color: COLORS.softCream },
+            { text: 'Сделано на HTML5 Canvas и JavaScript', font: '14px sans-serif', color: COLORS.steelBlue },
             { text: '', font: '14px sans-serif', color: COLORS.softCream },
-            { text: 'Worlds', font: 'bold 18px sans-serif', color: COLORS.mutedGold },
-            { text: 'Whispering Forest', font: '14px sans-serif', color: COLORS.forest.leaf },
-            { text: 'Scorching Desert', font: '14px sans-serif', color: COLORS.desert.sand },
-            { text: 'Frozen Tundra', font: '14px sans-serif', color: COLORS.tundra.iceBlue },
-            { text: 'Molten Volcano', font: '14px sans-serif', color: COLORS.volcano.lavaOrange },
-            { text: 'The Citadel', font: '14px sans-serif', color: COLORS.mutedGold },
+            { text: 'Миры', font: 'bold 18px sans-serif', color: COLORS.mutedGold },
+            { text: 'Шепчущий лес', font: '14px sans-serif', color: COLORS.forest.leaf },
+            { text: 'Палящая пустыня', font: '14px sans-serif', color: COLORS.desert.sand },
+            { text: 'Ледяная тундра', font: '14px sans-serif', color: COLORS.tundra.iceBlue },
+            { text: 'Огненный вулкан', font: '14px sans-serif', color: COLORS.volcano.lavaOrange },
+            { text: 'Цитадель', font: '14px sans-serif', color: COLORS.mutedGold },
             { text: '', font: '14px sans-serif', color: COLORS.softCream },
-            { text: 'Thank you for playing!', font: 'bold 22px sans-serif', color: COLORS.mossGreen },
+            { text: 'Спасибо за игру!', font: 'bold 22px sans-serif', color: COLORS.mossGreen },
             { text: '', font: '14px sans-serif', color: COLORS.softCream },
             { text: '', font: '14px sans-serif', color: COLORS.softCream },
         ];
@@ -991,7 +991,7 @@ const Menu = {
         // Fixed "Press Enter" prompt at bottom
         const pulseAlpha = 0.5 + 0.5 * Math.abs(Math.sin(this.animTimer * 2.5));
         ctx.globalAlpha = pulseAlpha;
-        this._drawTextWithOutline(ctx, 'Press Enter to Return to Title',
+        this._drawTextWithOutline(ctx, 'Нажмите Enter, чтобы вернуться в меню',
             CANVAS_WIDTH / 2, CANVAS_HEIGHT - 30,
             '18px sans-serif',
             COLORS.mutedGold, COLORS.deepCharcoal, 'center');

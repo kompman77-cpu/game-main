@@ -1454,7 +1454,7 @@ const Level = {
         const W = 120;
         const H = 20;
         this._initGrid(W, H);
-        this.name = 'Frozen Lake';
+        this.name = 'Замёрзшее озеро';
         this.id = '3-1';
 
         // Ground floor (rows 17-19) — mostly ice in this stage
@@ -1612,7 +1612,7 @@ const Level = {
         const W = 135;
         const H = 22;
         this._initGrid(W, H);
-        this.name = 'Crystal Caverns';
+        this.name = 'Кристальные пещеры';
         this.id = '3-2';
 
         // Ground floor (rows 19-21)
@@ -1771,7 +1771,7 @@ const Level = {
         const W = 165;
         const H = 20;
         this._initGrid(W, H);
-        this.name = 'Avalanche Peak';
+        this.name = 'Пик Лавины';
         this.id = '3-3';
         this.autoScroll = true;
         this.autoScrollSpeed = 1.2;
@@ -2004,7 +2004,7 @@ const Level = {
         const W = 125;
         const H = 20;
         this._initGrid(W, H);
-        this.name = 'Lava Fields';
+        this.name = 'Лавовые поля';
         this.id = '4-1';
 
         // Ground floor (rows 17-19) — dark stone
@@ -2154,7 +2154,7 @@ const Level = {
         const W = 145;
         const H = 20;
         this._initGrid(W, H);
-        this.name = 'Forge of Chains';
+        this.name = 'Кузня цепей';
         this.id = '4-2';
 
         // Ground floor (rows 17-19)
@@ -2310,7 +2310,7 @@ const Level = {
         const W = 155;
         const H = 20;
         this._initGrid(W, H);
-        this.name = 'Caldera';
+        this.name = 'Кальдера';
         this.id = '4-3';
 
         // Ground floor (rows 17-19)
@@ -2459,7 +2459,7 @@ const Level = {
         const W = 220;
         const H = 20;
         this._initGrid(W, H);
-        this.name = 'The Citadel';
+        this.name = 'Цитадель';
         this.id = '5-1';
 
         // =============================================
