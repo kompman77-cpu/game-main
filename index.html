@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<!--
+MIT License
+
+Copyright (c) 2025 Kingdoms of the Canvas Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Mobile touch controls layer added for Roll-Express (2026). MIT, same terms.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kingdoms of the Canvas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0D0D15;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #gameCanvas {
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* ===== Mobile touch controls (touch devices only) ===== */
+        #tc-root {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+        }
+        #tc-root.on { display: block; }
+
+        .tc-btn {
+            position: absolute;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.10);
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: bold;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: background 0.05s;
+        }
+        .tc-btn.pressed {
+            background: rgba(255, 255, 255, 0.30);
+        }
+
+        /* Left: D-pad */
+        .tc-up    { width: 62px; height: 62px; left: 14px;  bottom: 104px; font-size: 24px; }
+        .tc-down  { width: 62px; height: 62px; left: 14px;  bottom: 18px;  font-size: 24px; }
+        .tc-left  { width: 62px; height: 62px; left: -36px; bottom: 61px;  font-size: 24px; }
+        .tc-right { width: 62px; height: 62px; left: 64px;  bottom: 61px;  font-size: 24px; }
+
+        /* Right: action buttons */
+        .tc-jump { width: 84px; height: 84px; right: 18px; bottom: 52px; font-size: 30px; background: rgba(90, 200, 255, 0.18); border-color: rgba(90, 200, 255, 0.5); }
+        .tc-atk  { width: 70px; height: 70px; right: 112px; bottom: 16px; font-size: 24px; background: rgba(255, 120, 90, 0.16); border-color: rgba(255, 120, 90, 0.5); }
+        .tc-run  { width: 58px; height: 58px; right: 118px; bottom: 104px; font-size: 12px; }
+        .tc-ok   { width: 58px; height: 58px; right: 26px; bottom: 152px; font-size: 12px; }
+
+        /* Top-right: pause + fullscreen */
+        .tc-pause { width: 52px; height: 52px; right: 14px; top: 14px; font-size: 20px; }
+        .tc-full  { width: 52px; height: 52px; right: 78px; top: 14px; font-size: 20px; }
+
+        /* Rotate hint */
+        #tc-rotate {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: #0D0D15;
+            color: #fff;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 14px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            text-align: center;
+        }
+        #tc-rotate .icon { font-size: 56px; animation: tc-spin 1.6s ease-in-out infinite; }
+        @keyframes tc-spin { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
+
+        /* Show rotate hint only on touch devices in portrait */
+        @media (orientation: portrait) {
+            #tc-root.on ~ #tc-rotate { display: flex; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- ===== On-screen gamepad (touch devices only) ===== -->
+    <div id="tc-root">
+        <div class="tc-btn tc-left"  data-key="ArrowLeft"  data-code="ArrowLeft">&#9664;</div>
+        <div class="tc-btn tc-right" data-key="ArrowRight" data-code="ArrowRight">&#9654;</div>
+        <div class="tc-btn tc-up"    data-key="ArrowUp"    data-code="ArrowUp">&#9650;</div>
+        <div class="tc-btn tc-down"  data-key="ArrowDown"  data-code="ArrowDown">&#9660;</div>
+
+        <div class="tc-btn tc-jump" data-key="z" data-code="KeyZ">Z</div>
+        <div class="tc-btn tc-atk"  data-key="x" data-code="KeyX">X</div>
+        <div class="tc-btn tc-run"  data-key="Shift" data-code="ShiftLeft">RUN</div>
+        <div class="tc-btn tc-ok"   data-key="Enter" data-code="Enter">OK</div>
+
+        <div class="tc-btn tc-pause" data-key="Escape" data-code="Escape">II</div>
+        <div class="tc-btn tc-full"  id="tc-fs" data-code="">&gt;&lt;</div>
+    </div>
+
+    <div id="tc-rotate">
+        <div class="icon">&#128260;</div>
+        <div>Поверните телефон горизонтально</div>
+    </div>
+
+    <!-- Engine modules -->
+    <script src="src/constants.js"></script>
+    <script src="src/input.js"></script>
+    <script src="src/level.js"></script>
+    <script src="src/physics.js"></script>
+    <script src="src/camera.js"></script>
+    <script src="src/renderer.js"></script>
+    <script src="src/particles.js"></script>
+    <script src="src/player.js"></script>
+
+    <!-- Enemy & Boss System (Sprint 5) -->
+    <script src="src/enemies.js"></script>
+
+    <!-- Game Structure & UI (Sprint 3) -->
+    <script src="src/transition.js"></script>
+    <script src="src/hud.js"></script>
+    <script src="src/menu.js"></script>
+
+    <!-- World Map, Collectibles & Save (Sprint 4) -->
+    <script src="src/save.js"></script>
+    <script src="src/collectibles.js"></script>
+    <script src="src/worldmap.js"></script>
+
+    <!-- Audio System (Sprint 10) -->
+    <script src="src/audio.js"></script>
+
+    <script src="src/states.js"></script>
+    <script src="src/game.js"></script>
+
+    <script>
+        // Scale canvas to fit window while preserving aspect ratio
+        function resizeCanvas() {
+            const canvas = document.getElementById('gameCanvas');
+            const windowW = window.innerWidth;
+            const windowH = window.innerHeight;
+            const aspect = 960 / 540;
+            const windowAspect = windowW / windowH;
+
+            let cssW, cssH;
+            if (windowAspect > aspect) {
+                cssH = windowH;
+                cssW = cssH * aspect;
+            } else {
+                cssW = windowW;
+                cssH = cssW / aspect;
+            }
+
+            canvas.style.width = cssW + 'px';
+            canvas.style.height = cssH + 'px';
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Expose all game globals on window for test accessibility (C-27)
+        window.Game = Game;
+        window.GameState = GameState;
+        window.Renderer = Renderer;
+        window.Input = Input;
+        window.Level = Level;
+        window.Physics = Physics;
+        window.Camera = Camera;
+        window.Player = Player;
+        window.Particles = Particles;
+        window.Enemies = Enemies;
+        window.Transition = Transition;
+        window.HUD = HUD;
+        window.Menu = Menu;
+        window.SaveSystem = SaveSystem;
+        window.Collectibles = Collectibles;
+        window.WorldMap = WorldMap;
+        window.AudioManager = AudioManager;
+
+        // Start the game
+        Game.init();
+
+        // ===== Touch controls layer (does not modify game code) =====
+        (function () {
+            // Show on touch devices only
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const root = document.getElementById('tc-root');
+            if (isTouch) {
+                // activate a bit later, so desktop never sees it
+                root.classList.add('on');
+            } else {
+                return;
+            }
+
+            function sendKey(type, key, code) {
+                const ev = new KeyboardEvent(type, {
+                    key: key, code: code,
+                    bubbles: true, cancelable: true
+                });
+                document.dispatchEvent(ev);       // bubbles up to window too
+                document.getElementById('gameCanvas').dispatchEvent(ev);
+            }
+
+            document.querySelectorAll('.tc-btn[data-key]').forEach(function (btn) {
+                const key = btn.dataset.key;
+                const code = btn.dataset.code;
+
+                function down(e) {
+                    e.preventDefault();
+                    btn.classList.add('pressed');
+                    sendKey('keydown', key, code);
+                }
+                function up(e) {
+                    if (e) e.preventDefault();
+                    btn.classList.remove('pressed');
+                    sendKey('keyup', key, code);
+                }
+
+                btn.addEventListener('touchstart', down, { passive: false });
+                btn.addEventListener('touchend', up, { passive: false });
+                btn.addEventListener('touchcancel', up, { passive: false });
+                // Release all on blur so keys never stick
+                window.addEventListener('blur', function () { up(null); });
+            });
+
+            // Fullscreen + landscape lock
+            document.getElementById('tc-fs').addEventListener('click', function () {
+                if (!document.fullscreenElement) {
+                    const req = document.documentElement.requestFullscreen ||
+                                document.documentElement.webkitRequestFullscreen;
+                    if (req) req.call(document.documentElement);
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(function () {});
+                    }
+                } else {
+                    document.exitFullscreen && document.exitFullscreen();
+                }
+            });
+
+            // Block pinch-zoom & double-tap zoom during play
+            document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (e) {
+                const now = Date.now();
+                if (now - lastTouchEnd < 300) e.preventDefault();
+                lastTouchEnd = now;
+            }, { passive: false });
+        })();
+    </script>
+</body>
+</html>
