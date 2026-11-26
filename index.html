@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
 MIT License
 
@@ -21,10 +22,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-On-screen touch controls layer added 2026 under the same MIT terms.
+Mobile touch controls layer added for Roll-Express (2026). MIT, same terms.
 -->
-
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -41,6 +40,10 @@ On-screen touch controls layer added 2026 under the same MIT terms.
             height: 100%;
             overflow: hidden;
             background: #0D0D15;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         #gameCanvas {
             display: block;
@@ -52,140 +55,80 @@ On-screen touch controls layer added 2026 under the same MIT terms.
             image-rendering: crisp-edges;
         }
 
-        /* ============ TOUCH CONTROLS (mobile only) ============ */
-        #touchLayer {
+        /* ===== Mobile touch controls (touch devices only) ===== */
+        #tc-root {
+            display: none;
             position: fixed;
             inset: 0;
             z-index: 1000;
             pointer-events: none;
-            display: none;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: none;
+            font-family: Arial, sans-serif;
         }
-        @media (pointer: coarse) {
-            #touchLayer { display: block; }
-        }
+        #tc-root.on { display: block; }
 
-        .tbtn {
+        .tc-btn {
+            position: absolute;
             pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.32);
+            border: 2px solid rgba(255, 255, 255, 0.30);
+            color: rgba(255, 255, 255, 0.80);
+            font-weight: bold;
+            touch-action: none;
             -webkit-user-select: none;
             user-select: none;
-            touch-action: none;
-            border: 2px solid rgba(255, 255, 255, 0.35);
-            background: rgba(13, 13, 21, 0.45);
-            color: rgba(255, 255, 255, 0.85);
-            border-radius: 14px;
-            font: bold 20px/1 monospace;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.08s;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
-        .tbtn:active, .tbtn.pressed {
-            background: rgba(255, 255, 255, 0.25);
+        .tc-btn.pressed {
+            background: rgba(255, 255, 255, 0.38);
+            color: rgba(0, 0, 0, 0.85);
+            border-color: rgba(255, 255, 255, 0.70);
         }
 
-        /* Left cluster: D-pad, anchored INSIDE the screen edge */
-        #dpad {
-            position: fixed;
-            left: max(14px, env(safe-area-inset-left));
-            bottom: max(16px, env(safe-area-inset-bottom));
-            display: grid;
-            grid-template-columns: repeat(3, 56px);
-            grid-template-rows: repeat(3, 56px);
-            gap: 6px;
-        }
-        #dpad .up    { grid-area: 1 / 2; }
-        #dpad .left  { grid-area: 2 / 1; }
-        #dpad .right { grid-area: 2 / 3; }
-        #dpad .down  { grid-area: 3 / 2; }
+        /* Left: compact D-pad at the bottom-left corner, inside the screen */
+        .tc-left  { width: 56px; height: 56px; left:  calc(10px + env(safe-area-inset-left, 0px));  bottom: calc(66px  + env(safe-area-inset-bottom, 0px)); font-size: 20px; }
+        .tc-right { width: 56px; height: 56px; left:  calc(86px + env(safe-area-inset-left, 0px));  bottom: calc(66px  + env(safe-area-inset-bottom, 0px)); font-size: 20px; }
+        .tc-up    { width: 48px; height: 48px; left:  calc(52px + env(safe-area-inset-left, 0px));  bottom: calc(126px + env(safe-area-inset-bottom, 0px)); font-size: 18px; }
+        .tc-down  { width: 48px; height: 48px; left:  calc(52px + env(safe-area-inset-left, 0px));  bottom: calc(10px  + env(safe-area-inset-bottom, 0px)); font-size: 18px; }
 
-        /* Right cluster: action buttons, anchored INSIDE the screen edge */
-        #actions {
-            position: fixed;
-            right: max(14px, env(safe-area-inset-right));
-            bottom: max(16px, env(safe-area-inset-bottom));
-            display: grid;
-            grid-template-columns: repeat(2, 66px);
-            grid-auto-rows: 62px;
-            gap: 8px;
-            align-items: end;
-        }
-        #actions .z   { width: 82px; height: 82px; border-radius: 50%; font-size: 26px; }
-        #actions .x   { font-size: 22px; }
-        #actions .run { font-size: 13px; }
-        #actions .ok  { font-size: 15px; }
+        /* Right: action buttons, each with a clear 12px+ gap from neighbours */
+        .tc-jump { width: 78px; height: 78px; right: calc(12px  + env(safe-area-inset-right, 0px)); bottom: calc(14px  + env(safe-area-inset-bottom, 0px)); font-size: 28px; background: rgba(90, 200, 255, 0.22); border-color: rgba(90, 200, 255, 0.55); }
+        .tc-atk  { width: 58px; height: 58px; right: calc(102px + env(safe-area-inset-right, 0px)); bottom: calc(12px  + env(safe-area-inset-bottom, 0px)); font-size: 20px; background: rgba(255, 120, 90, 0.20); border-color: rgba(255, 120, 90, 0.55); }
+        .tc-run  { width: 50px; height: 50px; right: calc(24px  + env(safe-area-inset-right, 0px)); bottom: calc(106px + env(safe-area-inset-bottom, 0px)); font-size: 11px; }
+        .tc-ok   { width: 50px; height: 50px; right: calc(108px + env(safe-area-inset-right, 0px)); bottom: calc(96px  + env(safe-area-inset-bottom, 0px)); font-size: 11px; }
 
-        /* Top-right: pause / fullscreen */
-        #topbtns {
-            position: fixed;
-            top: max(10px, env(safe-area-inset-top));
-            right: max(14px, env(safe-area-inset-right));
-            display: flex;
-            gap: 10px;
-        }
-        #topbtns .tbtn {
-            width: 44px;
-            height: 40px;
-            font-size: 16px;
-        }
+        /* Top-right: pause + fullscreen */
+        .tc-pause { width: 44px; height: 44px; right: calc(12px + env(safe-area-inset-right, 0px)); top: calc(10px + env(safe-area-inset-top, 0px)); font-size: 16px; }
+        .tc-full  { width: 44px; height: 44px; right: calc(64px + env(safe-area-inset-right, 0px)); top: calc(10px + env(safe-area-inset-top, 0px)); font-size: 16px; }
 
-        /* Rotate hint (portrait phones) */
-        #rotateHint {
-            position: fixed;
-            inset: 0;
-            z-index: 1001;
-            background: rgba(13, 13, 21, 0.92);
-            color: #fff;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            text-align: center;
-            font: bold 17px/1.4 monospace;
-            padding: 0 30px;
-        }
-        #rotateHint .icon {
-            font-size: 52px;
-            animation: rot 1.6s ease-in-out infinite;
-        }
-        @keyframes rot {
-            0%, 40% { transform: rotate(0deg); }
-            60%, 100% { transform: rotate(90deg); }
-        }
-        @media (pointer: coarse) and (orientation: portrait) {
-            #rotateHint { display: flex; }
+        /* Show rotate hint only on touch devices in portrait */
+        @media (orientation: portrait) {
+            #tc-root.on ~ #tc-rotate { display: flex; }
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
 
-    <!-- On-screen touch controls (mobile only) -->
-    <div id="touchLayer">
-        <div id="dpad">
-            <button class="tbtn up"    data-key="ArrowUp">&#9650;</button>
-            <button class="tbtn left"  data-key="ArrowLeft">&#9664;</button>
-            <button class="tbtn right" data-key="ArrowRight">&#9654;</button>
-            <button class="tbtn down"  data-key="ArrowDown">&#9660;</button>
-        </div>
-        <div id="actions">
-            <button class="tbtn ok"  data-key="Enter">OK</button>
-            <button class="tbtn run" data-key="Shift">RUN</button>
-            <button class="tbtn x"   data-key="x">X</button>
-            <button class="tbtn z"   data-key="z">Z</button>
-        </div>
-        <div id="topbtns">
-            <button class="tbtn pause" data-key="Escape">II</button>
-            <button class="tbtn fs" id="fsBtn">&#x2217;</button>
-        </div>
+    <!-- ===== On-screen gamepad (touch devices only) ===== -->
+    <div id="tc-root">
+        <div class="tc-btn tc-left"  data-key="ArrowLeft"  data-code="ArrowLeft">&#9664;</div>
+        <div class="tc-btn tc-right" data-key="ArrowRight" data-code="ArrowRight">&#9654;</div>
+        <div class="tc-btn tc-up"    data-key="ArrowUp"    data-code="ArrowUp">&#9650;</div>
+        <div class="tc-btn tc-down"  data-key="ArrowDown"  data-code="ArrowDown">&#9660;</div>
+
+        <div class="tc-btn tc-jump" data-key="z" data-code="KeyZ">Z</div>
+        <div class="tc-btn tc-atk"  data-key="x" data-code="KeyX">X</div>
+        <div class="tc-btn tc-run"  data-key="Shift" data-code="ShiftLeft">RUN</div>
+        <div class="tc-btn tc-ok"   data-key="Enter" data-code="Enter">OK</div>
+
+        <div class="tc-btn tc-pause" data-key="Escape" data-code="Escape">II</div>
+        <div class="tc-btn tc-full"  id="tc-fs" data-code="">&gt;&lt;</div>
     </div>
 
-    <div id="rotateHint">
+    <div id="tc-rotate">
         <div class="icon">&#128260;</div>
         <div>Поверните телефон горизонтально</div>
     </div>
@@ -242,7 +185,6 @@ On-screen touch controls layer added 2026 under the same MIT terms.
         }
 
         window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('orientationchange', resizeCanvas);
         resizeCanvas();
 
         // Expose all game globals on window for test accessibility (C-27)
@@ -267,97 +209,113 @@ On-screen touch controls layer added 2026 under the same MIT terms.
         // Start the game
         Game.init();
 
-        /* ================= TOUCH CONTROLS LOGIC =================
-           Buttons emulate real keyboard events. A single dispatch on
-           document with bubbles:true reaches listeners on both
-           document and window (event path: document -> window),
-           so one tap = one key press, no duplicates. */
-
+        // ===== Touch controls layer (does not modify game code) =====
         (function () {
-            // Key codes for consistency: 'z'/'x' as letters, Shift as key
-            const KEY_MAP = {
-                'Shift': { key: 'Shift', code: 'ShiftLeft' },
-                'Escape': { key: 'Escape', code: 'Escape' },
-                'Enter': { key: 'Enter', code: 'Enter' },
-                'ArrowUp': { key: 'ArrowUp', code: 'ArrowUp' },
-                'ArrowDown': { key: 'ArrowDown', code: 'ArrowDown' },
-                'ArrowLeft': { key: 'ArrowLeft', code: 'ArrowLeft' },
-                'ArrowRight': { key: 'ArrowRight', code: 'ArrowRight' },
-                'z': { key: 'z', code: 'KeyZ' },
-                'x': { key: 'x', code: 'KeyX' }
-            };
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const root = document.getElementById('tc-root');
+            if (!isTouch) return;
+            root.classList.add('on');
 
-            const pressed = new Set(); // currently held logical keys
-
-            function send(type, name, btn) {
-                const m = KEY_MAP[name] || { key: name, code: name };
+            function sendKey(type, key, code) {
                 const ev = new KeyboardEvent(type, {
-                    key: m.key,
-                    code: m.code,
-                    bubbles: true,
-                    cancelable: true
+                    key: key, code: code,
+                    bubbles: true, cancelable: true
                 });
+                window.dispatchEvent(ev);
                 document.dispatchEvent(ev);
-                if (btn) btn.classList.toggle('pressed', type === 'keydown');
+                const c = document.getElementById('gameCanvas');
+                if (c) c.dispatchEvent(ev);
             }
+
+            // One finger = one button. Each touch is tracked by its id,
+            // so a finger can never "leak" into a neighbouring button,
+            // and a pressed key is released only when ITS finger lifts.
+            const activeTouches = new Map(); // touch id -> button element
 
             function press(btn) {
-                const name = btn.dataset.key;
-                if (pressed.has(name)) return;      // block auto-repeat & multi-finger ghosting
-                pressed.add(name);
-                send('keydown', name, btn);
+                if (!btn || btn.classList.contains('pressed')) return;
+                btn.classList.add('pressed');
+                sendKey('keydown', btn.dataset.key, btn.dataset.code);
             }
-
             function release(btn) {
-                const name = btn.dataset.key;
-                if (!pressed.delete(name)) return;
-                send('keyup', name, btn);
+                if (!btn) return;
+                btn.classList.remove('pressed');
+                sendKey('keyup', btn.dataset.key, btn.dataset.code);
             }
 
-            document.querySelectorAll('#touchLayer .tbtn[data-key]').forEach(btn => {
-                const name = btn.dataset.key;
-                // Pointer events cover touch + stylus uniformly
-                btn.addEventListener('pointerdown', e => {
-                    e.preventDefault();
-                    btn.setPointerCapture(e.pointerId);
-                    press(btn);
-                });
-                btn.addEventListener('pointerup', e => {
-                    e.preventDefault();
-                    release(btn);
-                });
-                btn.addEventListener('pointercancel', () => release(btn));
-                btn.addEventListener('lostpointercapture', () => release(btn));
-                // Safety: sliding a finger off the button releases the key
-                btn.addEventListener('pointerleave', e => { if (e.pointerType === 'touch') release(btn); });
-                btn.addEventListener('contextmenu', e => e.preventDefault());
+            function findBtn(el) {
+                while (el && el !== document.body) {
+                    if (el.classList && el.classList.contains('tc-btn')) return el;
+                    el = el.parentElement;
+                }
+                return null;
+            }
+
+            document.addEventListener('touchstart', function (e) {
+                for (const t of e.changedTouches) {
+                    const btn = findBtn(t.target);
+                    if (btn) {
+                        e.preventDefault();
+                        activeTouches.set(t.identifier, btn);
+                        press(btn);
+                    }
+                }
+            }, { passive: false });
+
+            document.addEventListener('touchmove', function (e) {
+                // If a finger slides off its own button, release that key
+                for (const t of e.changedTouches) {
+                    const btn = activeTouches.get(t.identifier);
+                    if (!btn) continue;
+                    const el = document.elementFromPoint(t.clientX, t.clientY);
+                    if (!el || findBtn(el) !== btn) {
+                        activeTouches.delete(t.identifier);
+                        release(btn);
+                    }
+                }
+            }, { passive: false });
+
+            function endTouch(e) {
+                for (const t of e.changedTouches) {
+                    const btn = activeTouches.get(t.identifier);
+                    if (btn) {
+                        activeTouches.delete(t.identifier);
+                        release(btn);
+                    }
+                }
+            }
+            document.addEventListener('touchend', endTouch, { passive: false });
+            document.addEventListener('touchcancel', endTouch, { passive: false });
+
+            // Release everything on blur so keys never stick
+            window.addEventListener('blur', function () {
+                document.querySelectorAll('.tc-btn').forEach(release);
+                activeTouches.clear();
             });
 
-            // Safety net: if the tab loses focus while a key is held, release all
-            window.addEventListener('blur', () => {
-                pressed.forEach(name => {
-                    const btn = document.querySelector('.tbtn[data-key="' + name + '"]');
-                    if (btn) release(btn);
-                });
-            });
-
-            // Fullscreen + landscape lock attempt (best effort per browser)
-            document.getElementById('fsBtn').addEventListener('pointerdown', e => {
-                e.preventDefault();
-                const el = document.documentElement;
+            // Fullscreen + landscape lock
+            document.getElementById('tc-fs').addEventListener('click', function () {
                 if (!document.fullscreenElement) {
-                    const p = el.requestFullscreen ? el.requestFullscreen() : Promise.resolve();
-                    Promise.resolve(p).then(() => {
-                        if (screen.orientation && screen.orientation.lock) {
-                            screen.orientation.lock('landscape').catch(() => {});
-                        }
-                    }).catch(() => {});
-                } else if (document.exitFullscreen) {
-                    document.exitFullscreen();
+                    const req = document.documentElement.requestFullscreen ||
+                                document.documentElement.webkitRequestFullscreen;
+                    if (req) req.call(document.documentElement);
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(function () {});
+                    }
+                } else {
+                    document.exitFullscreen && document.exitFullscreen();
                 }
             });
+
+            // Block pinch-zoom & double-tap zoom during play
+            document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (e) {
+                const now = Date.now();
+                if (now - lastTouchEnd < 300) e.preventDefault();
+                lastTouchEnd = now;
+            }, { passive: false });
         })();
     </script>
 </body>
 </html>
-
